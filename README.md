@@ -13,8 +13,8 @@ Put the `MEGUplusplus.asi` file into the game binaries folder, eg. `C:\Steam\ste
 
 
 ## Console commands
-- [Console Commands](wiki/Console-commands) page on Wiki
-- [Console Variables](wiki/Console-variables) page on Wiki
+- [Console Commands](../../wiki/Console-commands) page on Wiki
+- [Console Variables](../../wiki/Console-variables) page on Wiki
 
 
 ## Notes
