@@ -1,6 +1,5 @@
-#pragma once
+#include <Memory/Utils.h>
 
-// Memory utilities
 BYTE WriteByte(LPVOID lpAddress, BYTE bValue)
 {
     DWORD dwOldProtection = 0;
@@ -26,10 +25,9 @@ BYTE WriteByte(LPVOID lpAddress, BYTE bValue)
 BOOL GetModuleHandleP(LPCSTR lpModuleName, HMODULE* hModule)
 {
     HMODULE newModule = GetModuleHandleA(lpModuleName);
-    if (*hModule != newModule) {
-        DBGPRINT("++ %s @ %p", lpModuleName, hModule);
+    if (newModule != NULL && *hModule != newModule) {
         *hModule = newModule;
         return TRUE;
     }
-    return FALSE;
+    return (newModule != NULL);
 }

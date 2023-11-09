@@ -1,3 +1,5 @@
+#ifndef GScript_h
+#define GScript_h
 #pragma once
 
 class GScript
@@ -13,15 +15,17 @@ private:
     typedef BOOL(*tIsGameFrozen)(void);
 
 public:
+    // GScript(HMODULE hMod) : hModule(hMod) {}
     GScript() {}
 
     bool Initialize() {
         if (Initialized) return true;
 
-        if (hModule == NULL)
+        if (hModule == NULL) {
             if (!GetModuleHandleP("GScript_Rhapsody.dll", &hModule) || hModule == NULL)
                 return false;
-        DBGPRINT("++ GScript_Rhapsody.dll %p", hModule);
+            DBGPRINT("-- GScript_Rhapsody.dll %p", hModule);
+        }
 
         Initialized = true;
         return true;
@@ -32,3 +36,4 @@ public:
         return true;
     }
 };
+#endif // GScript_h

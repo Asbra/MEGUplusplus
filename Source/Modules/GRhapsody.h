@@ -1,3 +1,5 @@
+#ifndef GRhapsody_h
+#define GRhapsody_h
 #pragma once
 
 /* IRhapsodyHudManager* IRhapsodyHudManager::GetSingleton()
@@ -21,18 +23,38 @@ private:
 
     GCore gcore = GCore();
 
+    typedef void (*tFreezeGame)(bool state, bool, bool);
+    typedef BOOL(*tIsGameFrozen)(void);
+
+private:
 public:
+    class TGRhapsodyInterface {};
+    
+    TGRhapsodyInterface* __cdecl GetInterface(void) {
+        return (*(TGRhapsodyInterface* (__cdecl*)(void))GetProcAddress(hModule, "?GetInterface@TGRhapsodyInterface@@SAPAV1@XZ"))();
+    }
+    
+    /* const char* __thiscall TGRhapsodyInterface::GetGameName(void) {
+        return (*(const char* (__thiscall*)(void))GetProcAddress(hModule, "?GetGameName@TGRhapsodyInterface@@UBEPBDXZ"))();
+    } */
+    /*
+    const char* __cdecl GetGameName(TGRhapsodyInterface* interface) {
+        return (*(const char* (__cdecl*)(TGRhapsodyInterface*))GetProcAddress(hModule, "?GetGameName@TGRhapsodyInterface@@UBEPBDXZ"))(interface);
+    }
+    */
+
+public:
+    // GRhapsody(HMODULE hMod) : hModule(hMod) {}
     GRhapsody() {}
 
     bool Initialize() {
         if (Initialized) return true;
 
-        if (hModule == NULL)
+        if (hModule == NULL) {
             if (!GetModuleHandleP("g_Rhapsody.sgl", &hModule) || hModule == NULL)
                 return false;
-        DBGPRINT("++ g_Rhapsody.sgl %p", hModule);
-
-        if (!ExpandGraffitiDecalLimit()) return false;
+            DBGPRINT("-- g_Rhapsody.sgl %p", hModule);
+        }
 
         Initialized = true;
         return true;
@@ -41,11 +63,18 @@ public:
     bool Update() {
         if (hModule == NULL) return false;
 
+        Patch();
+
         return true;
     }
 
+    BOOL Patch()
+    {
+        return TRUE; // ExpandGraffitiDecalLimit();
+    }
+
     // Increase graffiti decal (spray tag,marker tag,poster,sticker,stencil,...) limit from 25 to 127
-    bool ExpandGraffitiDecalLimit()
+    BOOL ExpandGraffitiDecalLimit()
     {
         /*
         * g_Rhapsody.sgl 10000000
@@ -88,29 +117,30 @@ public:
 
         if (*((BYTE*)Offset1) == 0x19) {
             if (WriteByte(Offset1, 0x7f) == 0) {
-                DBGPRINT("++ Decal limit #1 patched @ %p [19 -> %02X]", Offset1, *((BYTE*)Offset1));
+                DBGPRINT("-- Decal limit #1 patched @ %p [19 -> %02X]", Offset1, *((BYTE*)Offset1));
             }
             else {
-                DBGPRINT("++ FAILED to patch decal limit #1 @ %p [%02X]", Offset1, *((BYTE*)Offset1));
+                DBGPRINT("-- FAILED to patch decal limit #1 @ %p [%02X]", Offset1, *((BYTE*)Offset1));
             }
         }
         if (*((BYTE*)Offset2) == 0x19) {
             if (WriteByte(Offset2, 0x7f) == 0) {
-                DBGPRINT("++ Decal limit #2 patched @ %p [19 -> %02X]", Offset2, *((BYTE*)Offset2));
+                DBGPRINT("-- Decal limit #2 patched @ %p [19 -> %02X]", Offset2, *((BYTE*)Offset2));
             }
             else {
-                DBGPRINT("++ FAILED to patch decal limit #2 @ %p [%02X]", Offset2, *((BYTE*)Offset2));
+                DBGPRINT("-- FAILED to patch decal limit #2 @ %p [%02X]", Offset2, *((BYTE*)Offset2));
             }
         }
         if (*((BYTE*)Offset3) == 0x19) {
             if (WriteByte(Offset3, 0x7f) == 0) {
-                DBGPRINT("++ Decal limit #3 patched @ %p [19 -> %02X]", Offset3, *((BYTE*)Offset3));
+                DBGPRINT("-- Decal limit #3 patched @ %p [19 -> %02X]", Offset3, *((BYTE*)Offset3));
             }
             else {
-                DBGPRINT("++ FAILED to patch decal limit #3 @ %p [%02X]", Offset3, *((BYTE*)Offset3));
+                DBGPRINT("-- FAILED to patch decal limit #3 @ %p [%02X]", Offset3, *((BYTE*)Offset3));
             }
         }
 
-        return true;
+        return TRUE;
     }
 };
+#endif // GRhapsody_h
